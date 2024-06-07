@@ -1,0 +1,15 @@
+:root{
+    --gris-oscuro: #B3C8CF;
+    --gris-claro: #BED7DC;
+    --cafe-oscuro: #E5DDC5;
+    --cafe-claro: #F1EEDC;
+
+    
+    --bs-navbar-bg: var(--cafe-oscuro); /* Define el color de fondo */
+       
+    
+}
+
+
+
+  
