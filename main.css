@@ -11,7 +11,12 @@ nav a[href="#"]{
     border-radius: 2rem;
     font-weight: bold
 }
-
+.carousel-item img {
+    width: 100%;
+    height: 35vh; 
+    object-fit: cover;
+    object-position: center;
+}
 
 
   
