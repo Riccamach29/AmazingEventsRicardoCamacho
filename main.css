@@ -5,6 +5,9 @@
     --cafe-claro: #F1EEDC;
 
 }
+*{
+    /* outline: 2px solid red; */
+}
 
 nav a[href="#"]{
     background-color: rgba(245, 245, 245, 0.46);
@@ -16,6 +19,21 @@ nav a[href="#"]{
     height: 35vh; 
     object-fit: cover;
     object-position: center;
+}
+
+.card {
+    width: 100%; /* Hace que la tarjeta ocupe el 100% del ancho de la columna */
+    max-width: 320px; /* Establece el ancho máximo de la tarjeta */
+    margin: 0 auto; /* Centra la tarjeta dentro de la columna */
+    min-height: 400px;
+}
+.card img{
+    height:200px;
+    object-fit: cover;
+}
+
+.card .table{
+    width: 50%;
 }
 
 
