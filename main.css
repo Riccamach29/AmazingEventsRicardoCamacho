@@ -5,9 +5,6 @@
     --cafe-claro: #F1EEDC;
 
 }
-*{
-    /* outline: 2px solid red; */
-}
 
 nav a[href="#"]{
     background-color: rgba(245, 245, 245, 0.46);
@@ -21,6 +18,10 @@ nav a[href="#"]{
     object-position: center;
 }
 
+main{
+    background-color: #481E14;
+    color: white;
+}
 .card {
     width: 100%; /* Hace que la tarjeta ocupe el 100% del ancho de la columna */
     max-width: 320px; /* Establece el ancho máximo de la tarjeta */
@@ -31,9 +32,24 @@ nav a[href="#"]{
     height:200px;
     object-fit: cover;
 }
+.card-body h5{
+    text-align: center;
+}
 
 .card .table{
     width: 50%;
+}
+
+footer {
+    height: 5vh;
+    background-color: #0C0C0C;
+    color: white;
+}
+
+footer img{
+    height: 30px;
+    object-fit: cover;
+
 }
 
 
