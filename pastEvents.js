@@ -196,55 +196,149 @@ const data = {
   };
 
 
-  
   function recorrerFechas(array, fechaActual) {
-      const eventsPast = [];
-      const eventsUpcoming = [];
+    const eventosPasados = [];
+    const eventosFuturos = [];
   
-      for (let i = 0; i < array.length; i++) {
-          const fechaUno = array[i].date;
-          if (fechaActual < fechaUno) {
-              eventsUpcoming.push(array[i]);
-          } else {
-              eventsPast.push(array[i]);
-          }
-      }
+    for (let i = 0; i < array.length; i++) {
+        const fechaUno = array[i].date;
+        if (fechaActual < fechaUno) {
+            eventosFuturos.push(array[i]);
+        } else {
+            eventosPasados.push(array[i]);
+        }
+    }
   
-      return { eventsPast, eventsUpcoming };
+    return { eventosPasados, eventosFuturos };
   }
   
+  
   function ponerTarjetas(array) {
-    
-
+    const contenedorTarjetas = document.getElementById('cardContainer');
+    contenedorTarjetas.innerHTML = ''; 
+  
+    if (array.length === 0) {
+        contenedorTarjetas.innerHTML = `
+            <div class="col-12 text-center">
+                <p class="h5">No se encontraron eventos que coincidan con los filtros aplicados.</p>
+            </div>
+        `;
+        return;
+    }
+  
     for (let i = 0; i < array.length; i++) {
-    const evento = array[i];
-
-    const newCard = document.createElement('div');
-    newCard.className = 'col tarjeta mb-4';
-    newCard.innerHTML = `
-        <div class="card h-100">
-            <img src="${evento.image}" class="card-img-top" alt="${evento.name}">
-            <div class="card-body d-flex flex-column">
-                <h5 class="card-title">${evento.name}</h5>
-                <p class="card-text">${evento.description}</p>
-                <div class="mt-auto d-flex justify-content-around align-items-center">
-                    <h3 class="text-success mb-0">$${evento.price}</h3>
-                    <a href="./details.html" class="btn btn-primary">Details</a>
+        const evento = array[i];
+  
+        const nuevaTarjeta = document.createElement('div');
+        nuevaTarjeta.className = 'col tarjeta mb-4';
+        nuevaTarjeta.innerHTML = `
+            <div class="card h-100">
+                <img src="${evento.image}" class="card-img-top" alt="${evento.name}">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">${evento.name}</h5>
+                    <p class="card-text">${evento.description}</p>
+                    <div class="mt-auto d-flex justify-content-around align-items-center">
+                        <h3 class="text-success mb-0">$${evento.price}</h3>
+                        <a href="./details.html?id=${evento._id}" class="btn btn-primary detalles" id="${evento._id}">Detalles</a>
+                    </div>
                 </div>
             </div>
-        </div>
-    `;
-    cardContainer.appendChild(newCard);
-}
-
-}
-
-const events = data.events;
-const fechaActual = data.currentDate;
-
-const { eventsPast, eventsUpcoming } = recorrerFechas(events, fechaActual);
-console.log(eventsPast);
-
- 
-const cardContainer = document.getElementById('cardContainer');
-ponerTarjetas(eventsPast)
+        `;
+        contenedorTarjetas.appendChild(nuevaTarjeta);
+    }
+  
+    agregarEventosDetalles();
+  }
+  
+  
+  function crearCheckboxes(array) {
+    const contenedorCheckboxes = document.getElementById('checkboxContainer');
+    const categorias = new Set(array.map(evento => evento.category));
+  
+    contenedorCheckboxes.innerHTML = ''; 
+  
+    categorias.forEach(categoria => {
+        const checkbox = document.createElement('div');
+        checkbox.className = 'form-check me-3';
+  
+        checkbox.innerHTML = `
+            <input class="form-check-input" type="checkbox" id="${categoria}" value="${categoria}">
+            <label class="form-check-label" for="${categoria}">
+                ${categoria}
+            </label>
+        `;
+  
+        contenedorCheckboxes.appendChild(checkbox);
+    });
+  }
+  
+  
+  function filtrarPorCategoria(eventos, categoriasSeleccionadas) {
+    if (categoriasSeleccionadas.length === 0) {
+        return eventos; 
+    }
+  
+    return eventos.filter(evento => categoriasSeleccionadas.includes(evento.category));
+  }
+  
+  
+  function filtrarPorTexto(eventos, texto) {
+    return eventos.filter(evento => 
+        evento.name.toLowerCase().includes(texto.toLowerCase()) ||
+        evento.description.toLowerCase().includes(texto.toLowerCase())
+    );
+  }
+  
+  
+  function actualizarTarjetas(eventos) {
+    const textoBusqueda = document.querySelector('input[type="search"]').value;
+    const categoriasSeleccionadas = Array.from(document.querySelectorAll('#checkboxContainer input[type="checkbox"]:checked'))
+        .map(checkbox => checkbox.value);
+  
+    let eventosFiltrados = filtrarPorCategoria(eventos, categoriasSeleccionadas);
+    eventosFiltrados = filtrarPorTexto(eventosFiltrados, textoBusqueda);
+  
+    ponerTarjetas(eventosFiltrados);
+  }
+  
+  function agregarEventosDetalles() {
+    const enlacesDetalles = document.querySelectorAll('.detalles');
+    
+    enlacesDetalles.forEach(enlace => {
+        enlace.addEventListener('click', (e) => {
+            
+            const eventoId = e.target.id;
+            capturarIdEvento(eventoId);
+        });
+    });
+  }
+  
+  let eventoDetails = null;
+  
+  function capturarIdEvento(id) {
+      eventoDetails = data.events.find(evento => evento._id === id);
+      console.log(eventoDetails); 
+  }
+  
+  
+  
+  
+  
+  const eventos = data.events;
+  const fechaActual = data.currentDate;
+  
+  const { eventosPasados, eventosFuturos } = recorrerFechas(eventos, fechaActual);
+  console.log(eventosPasados);
+  
+  crearCheckboxes(eventosPasados);
+  ponerTarjetas(eventosPasados);
+  
+  
+  document.querySelector('input[type="search"]').addEventListener('input', () => {
+    actualizarTarjetas(eventosPasados);
+  });
+  
+  
+  document.querySelector('#checkboxContainer').addEventListener('change', () => {
+    actualizarTarjetas(eventosPasados);
+  });

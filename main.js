@@ -195,33 +195,230 @@ const data = {
     ],
   };
   
-    
   function ponerTarjetas(array) {
-    
-
-          for (let i = 0; i < array.length; i++) {
-          const evento = array[i];
-    
-          const newCard = document.createElement('div');
-          newCard.className = 'col tarjeta mb-4';
-          newCard.innerHTML = `
-              <div class="card h-100">
-                  <img src="${evento.image}" class="card-img-top" alt="${evento.name}">
-                  <div class="card-body d-flex flex-column">
-                      <h5 class="card-title">${evento.name}</h5>
-                      <p class="card-text">${evento.description}</p>
-                      <div class="mt-auto d-flex justify-content-around align-items-center">
-                          <h3 class="text-success mb-0">$${evento.price}</h3>
-                          <a href="./details.html" class="btn btn-primary">Details</a>
-                      </div>
-                  </div>
-              </div>
-          `;
-          cardContainer.appendChild(newCard);
-      }
-    
+    const contenedorTarjetas = document.getElementById('cardContainer');
+    contenedorTarjetas.innerHTML = ''; 
+  
+    if (array.length === 0) {
+        contenedorTarjetas.innerHTML = `
+            <div class="col-12 text-center">
+                <p class="h5">No se encontraron eventos que coincidan con los filtros aplicados.</p>
+            </div>
+        `;
+        return;
+    }
+  
+    for (let i = 0; i < array.length; i++) {
+        const evento = array[i];
+  
+        const nuevaTarjeta = document.createElement('div');
+        nuevaTarjeta.className = 'col tarjeta mb-4';
+        nuevaTarjeta.innerHTML = `
+            <div class="card h-100">
+                <img src="${evento.image}" class="card-img-top" alt="${evento.name}">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">${evento.name}</h5>
+                    <p class="card-text">${evento.description}</p>
+                    <div class="mt-auto d-flex justify-content-around align-items-center">
+                        <h3 class="text-success mb-0">$${evento.price}</h3>
+                        <a id="details-${evento._id}" href="./details.html?id=${evento._id}" class="btn btn-primary">Detalles</a>
+                    </div>
+                </div>
+            </div>
+        `;
+        contenedorTarjetas.appendChild(nuevaTarjeta);
+    }
   }
+  
+  function obtenerCategoriasUnicas(array) {
+    const categoriasUnicas = new Set();
+    array.forEach(event => {
+      if (event.category) {
+        categoriasUnicas.add(event.category);
+      }
+    });
+    return Array.from(categoriasUnicas);
+  }
+  
+  function pintarCheckbox(array) {
+    checkboxContainer.innerHTML = '';
+    array.forEach((categoria, index) => {
+      const newCheckbox = document.createElement('div');
+      newCheckbox.className = 'form-check';
+      newCheckbox.innerHTML = `
+        <input class="form-check-input" type="checkbox" id="check${index}">
+        <label class="form-check-label" for="check${index}">${categoria}</label>
+      `;
+      checkboxContainer.appendChild(newCheckbox);
+    });
+  }
+  
+  function filtrarPorCategorias(array) {
+    const checkboxes = document.querySelectorAll('#checkboxContainer input[type="checkbox"]:checked');
+    const categoriasSeleccionadas = Array.from(checkboxes).map(checkbox => checkbox.nextElementSibling.textContent);
+    return array.filter(event => categoriasSeleccionadas.length === 0 || categoriasSeleccionadas.includes(event.category));
+  }
+  
+  function filtrarPorBusqueda(array, textoBusqueda) {
+    textoBusqueda = textoBusqueda.toLowerCase();
+    return array.filter(evento => 
+      evento.name.toLowerCase().includes(textoBusqueda) ||
+      evento.description.toLowerCase().includes(textoBusqueda)
+    );
+  }
+  
+  function aplicarFiltros() {
+    const textoBusqueda = searchInput.value;
+    
+    let eventosFiltrados = filtrarPorCategorias(events);
+    
+    eventosFiltrados = filtrarPorBusqueda(eventosFiltrados, textoBusqueda);
+   
+    ponerTarjetas(eventosFiltrados);
+  }
+  
   
   const events = data.events;  
   const cardContainer = document.getElementById('cardContainer');
-  ponerTarjetas(events)
+  const checkboxContainer = document.getElementById('checkboxContainer');
+  const searchInput = document.querySelector('input[type="search"]'); 
+  
+  ponerTarjetas(events);
+  
+  const categoriasUnicas = obtenerCategoriasUnicas(events);
+  pintarCheckbox(categoriasUnicas);
+  
+  checkboxContainer.addEventListener('change', aplicarFiltros);
+  searchInput.addEventListener('input', aplicarFiltros);
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 
+function ponerTarjetas(array) {
+  const contenedorTarjetas = document.getElementById('cardContainer');
+  contenedorTarjetas.innerHTML = ''; 
+
+  if (array.length === 0) {
+      contenedorTarjetas.innerHTML = `
+          <div class="col-12 text-center">
+              <p class="h5">No se encontraron eventos que coincidan con los filtros aplicados.</p>
+          </div>
+      `;
+      return;
+  }
+
+  for (let i = 0; i < array.length; i++) {
+      const evento = array[i];
+
+      const nuevaTarjeta = document.createElement('div');
+      nuevaTarjeta.className = 'col tarjeta mb-4';
+      nuevaTarjeta.innerHTML = `
+          <div class="card h-100">
+              <img src="${evento.image}" class="card-img-top" alt="${evento.name}">
+              <div class="card-body d-flex flex-column">
+                  <h5 class="card-title">${evento.name}</h5>
+                  <p class="card-text">${evento.description}</p>
+                  <div class="mt-auto d-flex justify-content-around align-items-center">
+                      <h3 class="text-success mb-0">$${evento.price}</h3>
+                      <a id="${evento._id}" href="./details.html" class="btn btn-primary">Detalles</a>
+                  </div>
+              </div>
+          </div>
+      `;
+      contenedorTarjetas.appendChild(nuevaTarjeta);
+  }
+}
+
+
+
+function obtenerCategoriasUnicas(array) {
+  const categoriasUnicas = new Set();
+  array.forEach(event => {
+    if (event.category) {
+      categoriasUnicas.add(event.category);
+    }
+  });
+  return Array.from(categoriasUnicas);
+}
+
+
+function pintarCheckbox(array) {
+  checkboxContainer.innerHTML = '';
+  array.forEach((categoria, index) => {
+    const newCheckbox = document.createElement('div');
+    newCheckbox.className = 'form-check';
+    newCheckbox.innerHTML = `
+      <input class="form-check-input" type="checkbox" id="check${index}">
+      <label class="form-check-label" for="check${index}">${categoria}</label>
+    `;
+    checkboxContainer.appendChild(newCheckbox);
+  });
+}
+
+function filtrarPorCategorias(array) {
+  const checkboxes = document.querySelectorAll('#checkboxContainer input[type="checkbox"]:checked');
+  const categoriasSeleccionadas = Array.from(checkboxes).map(checkbox => checkbox.nextElementSibling.textContent);
+  return array.filter(event => categoriasSeleccionadas.length === 0 || categoriasSeleccionadas.includes(event.category));
+}
+
+
+function filtrarPorBusqueda(array, textoBusqueda) {
+  textoBusqueda = textoBusqueda.toLowerCase();
+  return array.filter(evento => 
+    evento.name.toLowerCase().includes(textoBusqueda) ||
+    evento.description.toLowerCase().includes(textoBusqueda)
+  );
+}
+
+
+function aplicarFiltros() {
+  const textoBusqueda = searchInput.value;
+  
+
+  let eventosFiltrados = filtrarPorCategorias(events);
+  
+  
+  eventosFiltrados = filtrarPorBusqueda(eventosFiltrados, textoBusqueda);
+  
+ 
+  ponerTarjetas(eventosFiltrados);
+}
+
+
+const events = data.events;  
+const cardContainer = document.getElementById('cardContainer');
+const checkboxContainer = document.getElementById('checkboxContainer');
+const searchInput = document.querySelector('input[type="search"]'); 
+
+ponerTarjetas(events);
+
+const categoriasUnicas = obtenerCategoriasUnicas(events);
+pintarCheckbox(categoriasUnicas);
+
+
+checkboxContainer.addEventListener('change', aplicarFiltros);
+
+
+searchInput.addEventListener('input', aplicarFiltros); */
+
+
+
