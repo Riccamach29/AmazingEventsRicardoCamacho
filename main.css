@@ -1,4 +1,12 @@
-
+.img-tarjeta {
+    width: 100%; /* Asegura que la imagen ocupe el ancho completo del contenedor */
+    height: auto; /* Mantiene la proporción de la imagen */
+    max-height: 300px; /* Ajusta la altura máxima de la imagen según sea necesario */
+    object-fit: cover; /* Ajusta la imagen para cubrir el contenedor sin distorsionarse */
+    border-radius: 15px; /* Bordes redondeados */
+    border: 2px solid #ddd; /* Opcional: Agrega un borde alrededor de la imagen */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Opcional: Agrega una sombra para un efecto visual adicional */
+}
 
 nav a[href="#"]{
     background-color: rgba(245, 245, 245, 0.46);
