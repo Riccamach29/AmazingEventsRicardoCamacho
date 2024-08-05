@@ -57,5 +57,9 @@ footer img{
     min-height: 85vh;
 }
 
+.equal-width th, td {
+    width: 33.33%;
+}
+
 
   
