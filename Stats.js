@@ -38,13 +38,13 @@ function calcularEstadisticasPorCategoria(eventos) {
     }));
 }
 
-// Función para encontrar el evento con el mayor porcentaje de asistencia
-function obtenerEventoMayorPorcentaje(eventos) {
+// Función para encontrar el evento con el mayor porcentaje de asistencia entre eventos pasados
+function obtenerEventoMayorAsistenciaPasada(eventos) {
     return eventos.reduce((max, evento) => evento.porcentajeAsistencia > max.porcentajeAsistencia ? evento : max, eventos[0]);
 }
 
-// Función para encontrar el evento con el menor porcentaje de asistencia
-function obtenerEventoMenorPorcentaje(eventos) {
+// Función para encontrar el evento con el menor porcentaje de asistencia entre eventos pasados
+function obtenerEventoMenorAsistenciaPasada(eventos) {
     return eventos.reduce((min, evento) => evento.porcentajeAsistencia < min.porcentajeAsistencia ? evento : min, eventos[0]);
 }
 
@@ -73,13 +73,13 @@ function procesarDatos(data) {
     const estadisticasPasados = calcularEstadisticasPorCategoria(eventosPasados);
 
     // Obtener eventos con mayor y menor porcentaje de asistencia, y mayor capacidad
-    const eventoMayorAsistencia = obtenerEventoMayorPorcentaje(eventosConGanancias);
-    const eventoMenorAsistencia = obtenerEventoMenorPorcentaje(eventosConGanancias);
+    const eventoMayorAsistencia = obtenerEventoMayorAsistenciaPasada(eventosPasados);
+    const eventoMenorAsistencia = obtenerEventoMenorAsistenciaPasada(eventosPasados);
     const eventoMayorCapacidad = obtenerEventoMayorCapacidad(eventosConGanancias);
 
     // Asignar estos eventos a los elementos de la tabla
-    document.getElementById('highest-assistance-event').innerText = eventoMayorAsistencia.name;
-    document.getElementById('lowest-assistance-event').innerText = eventoMenorAsistencia.name;
+    document.getElementById('highest-assistance-event').innerText = `${eventoMayorAsistencia.name} (${eventoMayorAsistencia.porcentajeAsistencia.toFixed(2)}%)`;
+    document.getElementById('lowest-assistance-event').innerText = `${eventoMenorAsistencia.name} (${eventoMenorAsistencia.porcentajeAsistencia.toFixed(2)}%)`;
     document.getElementById('largest-capacity-event').innerText = eventoMayorCapacidad.name;
 
     // Llenar la tabla de estadísticas de eventos futuros
